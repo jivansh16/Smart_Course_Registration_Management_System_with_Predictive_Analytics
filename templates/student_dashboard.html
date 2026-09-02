@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard — SmartReg{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🎓 Welcome, {{ student.name }}</h1>
+
+<!-- Stats Cards -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-value">{{ student.cgpa }}</div>
+        <div class="stat-label">CGPA</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ student.total_credits_completed }}</div>
+        <div class="stat-label">Credits Done</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ current_credits }}</div>
+        <div class="stat-label">This Semester</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ registrations|length }}</div>
+        <div class="stat-label">Courses Enrolled</div>
+    </div>
+</div>
+
+<!-- Action Button -->
+<div style="margin-bottom: 1.5rem;">
+    <a href="{{ url_for('register_course') }}" class="btn btn-primary">
+        ➕ Register for a New Course
+    </a>
+</div>
+
+<!-- Current Enrollments -->
+<div class="card">
+    <div class="card-header">📋 Current Semester Courses (Fall 2026)</div>
+    {% if registrations %}
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Course Name</th>
+                <th>Credits</th>
+                <th>Instructor</th>
+                <th>Schedule</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reg in registrations %}
+            <tr>
+                <td><strong>{{ reg.course_code }}</strong></td>
+                <td>{{ reg.course_name }}</td>
+                <td>{{ reg.credits }}</td>
+                <td>{{ reg.instructor_name }}</td>
+                <td>{{ reg.schedule }}</td>
+                <td><span class="badge badge-success">{{ reg.status }}</span></td>
+                <td>
+                    <form method="POST" action="{{ url_for('drop_course_route', reg_id=reg.reg_id) }}"
+                          style="display: inline;"
+                          onsubmit="return confirm('Are you sure you want to drop {{ reg.course_code }}?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Drop</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p>You haven't registered for any courses yet.</p>
+        <a href="{{ url_for('register_course') }}" class="btn btn-primary" style="margin-top: 1rem;">Browse Courses</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Past Courses -->
+{% if past_courses %}
+<div class="card">
+    <div class="card-header">📜 Past Course History</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Course Name</th>
+                <th>Semester</th>
+                <th>Grade</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in past_courses %}
+            <tr>
+                <td><strong>{{ course.course_code }}</strong></td>
+                <td>{{ course.course_name }}</td>
+                <td>{{ course.semester }}</td>
+                <td>
+                    {% if course.grade %}
+                        <span class="badge {% if course.grade in ['A', 'B'] %}badge-success{% elif course.grade in ['C', 'D'] %}badge-warning{% else %}badge-danger{% endif %}">
+                            {{ course.grade }}
+                        </span>
+                    {% else %}
+                        <span class="badge badge-muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge {% if course.status == 'Completed' %}badge-success{% elif course.status == 'Dropped' %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ course.status }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

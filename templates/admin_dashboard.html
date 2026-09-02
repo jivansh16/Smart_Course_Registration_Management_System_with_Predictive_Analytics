@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — SmartReg{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🛡️ Admin Dashboard</h1>
+
+<!-- Summary Stats -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_students }}</div>
+        <div class="stat-label">Total Students</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_courses }}</div>
+        <div class="stat-label">Courses</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_sections }}</div>
+        <div class="stat-label">Sections (Fall 2026)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_enrollments }}</div>
+        <div class="stat-label">Active Enrollments</div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div style="margin-bottom: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+    <a href="{{ url_for('admin_db_view') }}" class="btn btn-primary">🗄️ Database Explorer</a>
+    <a href="{{ url_for('admin_risk') }}" class="btn btn-primary" style="background: #0284c7;">🔍 At-Risk Student Report</a>
+    <form method="POST" action="{{ url_for('admin_train_model') }}" style="display: inline;">
+        <button type="submit" class="btn btn-success">🤖 Retrain ML Model</button>
+    </form>
+</div>
+
+<!-- Enrollment Overview -->
+<div class="card">
+    <div class="card-header">📊 Section Enrollment Overview</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Course Name</th>
+                <th>Instructor</th>
+                <th>Schedule</th>
+                <th>Enrolled / Max</th>
+                <th>Fill Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sec in sections %}
+            <tr>
+                <td><strong>{{ sec.course_code }}</strong></td>
+                <td>{{ sec.course_name }}</td>
+                <td>{{ sec.instructor_name }}</td>
+                <td style="font-size: 0.8rem;">{{ sec.schedule }}</td>
+                <td>{{ sec.enrolled_seats }} / {{ sec.max_seats }}</td>
+                <td>
+                    {% set pct = (sec.enrolled_seats / sec.max_seats * 100) | int if sec.max_seats > 0 else 0 %}
+                    <div class="seats-indicator">
+                        <span>{{ pct }}%</span>
+                        <div class="seats-bar" style="width: 80px;">
+                            <div class="seats-bar-fill" style="width: {{ pct }}%;
+                                background: {% if pct > 90 %}var(--danger){% elif pct > 70 %}var(--warning){% else %}var(--success){% endif %};"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- All Students -->
+<div class="card">
+    <div class="card-header">👥 Student Directory</div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>CGPA</th>
+                <th>Credits Completed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stu in students %}
+            <tr>
+                <td>{{ stu.student_id }}</td>
+                <td><strong>{{ stu.name }}</strong></td>
+                <td>{{ stu.department }}</td>
+                <td>
+                    <span class="badge {% if stu.cgpa >= 7.5 %}badge-success{% elif stu.cgpa >= 5.0 %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ stu.cgpa }}
+                    </span>
+                </td>
+                <td>{{ stu.total_credits_completed }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

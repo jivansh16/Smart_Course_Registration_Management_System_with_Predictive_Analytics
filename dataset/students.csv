@@ -1,0 +1,41 @@
+student_id,name,department,cgpa,total_credits_completed
+7,Aarav,Computer Science,9.0,16
+8,Vivaan,Mathematics,9.2,24
+9,Aditya,Physics,8.0,56
+10,Vihaan,Electronics,7.7,56
+11,Arjun,Computer Science,9.6,16
+12,Sai,Mathematics,8.9,16
+13,Reyansh,Physics,7.6,24
+14,Ayaan,Electronics,8.0,48
+15,Krishna,Computer Science,7.6,24
+16,Ishaan,Mathematics,9.1,56
+17,Ananya,Physics,6.6,24
+18,Diya,Electronics,6.4,32
+19,Myra,Computer Science,7.1,16
+20,Sara,Mathematics,7.0,24
+21,Aadhya,Physics,6.9,32
+22,Isha,Electronics,6.1,24
+23,Kavya,Computer Science,7.4,32
+24,Riya,Mathematics,5.7,40
+25,Tara,Physics,5.7,64
+26,Zara,Electronics,6.2,32
+27,Rohan,Computer Science,7.1,56
+28,Karan,Mathematics,6.4,16
+29,Amit,Physics,7.4,40
+30,Priya,Electronics,5.7,32
+31,Neha,Computer Science,7.2,48
+32,Rahul,Mathematics,5.2,32
+33,Sneha,Physics,4.4,56
+34,Deepak,Electronics,3.2,56
+35,Pooja,Computer Science,3.6,32
+36,Vikram,Mathematics,5.5,64
+37,Meera,Physics,3.6,16
+38,Yash,Electronics,4.0,40
+39,Simran,Computer Science,4.6,32
+40,Akash,Mathematics,3.4,32
+41,Nisha,Physics,3.5,32
+42,Suresh,Electronics,4.8,56
+43,Anjali,Computer Science,4.6,48
+44,Mohit,Mathematics,4.6,48
+45,Divya,Physics,4.8,24
+46,Rajesh,Electronics,4.2,32

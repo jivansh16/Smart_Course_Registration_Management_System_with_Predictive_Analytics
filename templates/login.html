@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Login — SmartReg{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-title">📚 SmartReg</div>
+        <div class="login-subtitle">Course Registration Management System</div>
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control"
+                       placeholder="Enter your username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control"
+                       placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                Login
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted);">
+            <strong>Demo Accounts:</strong>
+            <div style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;">
+                <span>Student: <code>aarav101</code></span>
+                <span>Pass: <code>student123</code></span>
+                <span>Instructor: <code>prof_sharma</code></span>
+                <span>Pass: <code>pass123</code></span>
+                <span>Admin: <code>admin</code></span>
+                <span>Pass: <code>admin123</code></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

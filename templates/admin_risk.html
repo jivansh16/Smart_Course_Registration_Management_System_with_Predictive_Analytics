@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}At-Risk Students — SmartReg{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🔍 At-Risk Student Report</h1>
+
+<div class="alert alert-info">
+    ℹ️ This report uses <strong>Logistic Regression</strong> trained on historical data to predict
+    students who may struggle in their current courses. Features: CGPA, prerequisite grade, and credit load.
+</div>
+
+{% if risk_flags %}
+<!-- Summary -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-value risk-high">{{ risk_flags | selectattr('risk_level', 'equalto', 'High') | list | length }}</div>
+        <div class="stat-label">🔴 High Risk</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value risk-medium">{{ risk_flags | selectattr('risk_level', 'equalto', 'Medium') | list | length }}</div>
+        <div class="stat-label">🟡 Medium Risk</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value risk-low">{{ risk_flags | selectattr('risk_level', 'equalto', 'Low') | list | length }}</div>
+        <div class="stat-label">🟢 Low Risk</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">⚠️ Flagged Students</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Department</th>
+                <th>CGPA</th>
+                <th>Course</th>
+                <th>Risk Score</th>
+                <th>Risk Level</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flag in risk_flags %}
+            <tr>
+                <td><strong>{{ flag.student_name }}</strong></td>
+                <td>{{ flag.department }}</td>
+                <td>{{ flag.cgpa }}</td>
+                <td>{{ flag.course_code }}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="risk-bar" style="width: 80px;">
+                            <div class="risk-bar-fill {{ flag.risk_level | lower }}"
+                                 style="width: {{ (flag.risk_score * 100) | int }}%;"></div>
+                        </div>
+                        <span>{{ "%.1f" | format(flag.risk_score * 100) }}%</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge {% if flag.risk_level == 'High' %}badge-danger{% elif flag.risk_level == 'Medium' %}badge-warning{% else %}badge-success{% endif %}">
+                        {% if flag.risk_level == 'High' %}🔴{% elif flag.risk_level == 'Medium' %}🟡{% else %}🟢{% endif %}
+                        {{ flag.risk_level }}
+                    </span>
+                </td>
+                <td style="font-size: 0.8rem; color: var(--text-muted);">{{ flag.reason }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-state-icon">🤖</div>
+        <p>No risk predictions available yet.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+            Go back to the Admin Dashboard and click <strong>"Retrain ML Model"</strong> to generate predictions.
+        </p>
+    </div>
+</div>
+{% endif %}
+
+<div style="margin-top: 1rem;">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">← Back to Admin Dashboard</a>
+</div>
+{% endblock %}

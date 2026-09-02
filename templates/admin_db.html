@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Database Explorer — SmartReg{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🗄️ SQL Database Explorer</h1>
+
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+    {% for tbl in tables %}
+        <a href="{{ url_for('admin_db_view', table=tbl) }}" 
+           class="btn {% if selected_table == tbl %}btn-primary{% else %}btn-sm{% endif %}"
+           style="{% if selected_table != tbl %}background: #e2e8f0; color: #334155;{% endif %}">
+            📄 {{ tbl }}
+        </a>
+    {% endfor %}
+</div>
+
+<!-- SQL Query Box -->
+<div class="card">
+    <div class="card-header">💻 Run Custom SQL Query</div>
+    <form method="POST" action="{{ url_for('admin_db_view') }}">
+        <div class="form-group">
+            <textarea name="sql_query" class="form-control" rows="3" 
+                      placeholder="e.g. SELECT * FROM Students WHERE cgpa > 7.5;" 
+                      style="font-family: monospace; font-size: 0.95rem;">{{ custom_query or '' }}</textarea>
+        </div>
+        <div style="display: flex; gap: 0.5rem; justify-content: space-between; align-items: center;">
+            <button type="submit" class="btn btn-success">▶ Run SQL</button>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                Tip: Try <code>SELECT * FROM Courses;</code> or <code>SELECT * FROM Registrations WHERE status='Completed';</code>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Results Table -->
+<div class="card">
+    <div class="card-header">
+        📊 Query Results {% if selected_table %}for table: <strong>{{ selected_table }}</strong>{% endif %}
+        <span class="badge badge-info" style="margin-left: auto;">{{ rows|length }} row(s)</span>
+    </div>
+
+    {% if rows and columns %}
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    {% for col in columns %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {% for col in columns %}
+                        <td>{{ row[col] if row[col] is not none else 'NULL' }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif not error %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p>No records found.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">← Back to Admin Dashboard</a>
+</div>
+{% endblock %}

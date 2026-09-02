@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Instructor Dashboard — SmartReg{% endblock %}
+
+{% block content %}
+<h1 class="page-title">👨‍🏫 Instructor Dashboard</h1>
+
+<!-- Sections assigned to this instructor -->
+{% if sections %}
+    {% for sec in sections %}
+    <div class="card">
+        <div class="card-header">
+            {{ sec.course_code }} — {{ sec.course_name }}
+            <span class="badge badge-info" style="margin-left: auto;">{{ sec.semester }}</span>
+        </div>
+        <div style="margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+            📅 {{ sec.schedule }} &nbsp;|&nbsp;
+            👥 {{ sec.enrolled_count }}/{{ sec.max_seats }} students enrolled
+        </div>
+
+        {% if sec.students %}
+        <form method="POST" action="{{ url_for('submit_grades', section_id=sec.section_id) }}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Department</th>
+                        <th>CGPA</th>
+                        <th>Current Status</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stu in sec.students %}
+                    <tr>
+                        <td><strong>{{ stu.name }}</strong></td>
+                        <td>{{ stu.department }}</td>
+                        <td>{{ stu.cgpa }}</td>
+                        <td>
+                            <span class="badge {% if stu.status == 'Enrolled' %}badge-info{% elif stu.status == 'Completed' %}badge-success{% else %}badge-warning{% endif %}">
+                                {{ stu.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if stu.status == 'Enrolled' %}
+                            <select name="grade_{{ stu.reg_id }}" class="grade-select">
+                                <option value="">--</option>
+                                <option value="A" {% if stu.grade == 'A' %}selected{% endif %}>A</option>
+                                <option value="B" {% if stu.grade == 'B' %}selected{% endif %}>B</option>
+                                <option value="C" {% if stu.grade == 'C' %}selected{% endif %}>C</option>
+                                <option value="D" {% if stu.grade == 'D' %}selected{% endif %}>D</option>
+                                <option value="F" {% if stu.grade == 'F' %}selected{% endif %}>F</option>
+                            </select>
+                            {% else %}
+                                {{ stu.grade or '—' }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div style="margin-top: 1rem; text-align: right;">
+                <button type="submit" class="btn btn-success">💾 Save Grades</button>
+            </div>
+        </form>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p>No students enrolled in this section yet.</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <p>You are not assigned to any sections this semester.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

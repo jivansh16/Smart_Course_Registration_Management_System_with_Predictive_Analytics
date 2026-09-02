@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Register for Courses — SmartReg{% endblock %}
+
+{% block content %}
+<h1 class="page-title">📝 Course Registration — Fall 2026</h1>
+
+<div class="alert alert-info">
+    ℹ️ You are currently enrolled in <strong>{{ current_credits }}</strong> credits.
+    Maximum allowed: <strong>21 credits</strong>.
+    Remaining capacity: <strong>{{ 21 - current_credits }}</strong> credits.
+</div>
+
+<div class="card">
+    <div class="card-header">📚 Available Courses</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Course Name</th>
+                <th>Credits</th>
+                <th>Department</th>
+                <th>Instructor</th>
+                <th>Schedule</th>
+                <th>Seats</th>
+                <th>Prereq</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sec in sections %}
+            <tr>
+                <td><strong>{{ sec.course_code }}</strong></td>
+                <td>{{ sec.course_name }}</td>
+                <td>{{ sec.credits }}</td>
+                <td>{{ sec.department }}</td>
+                <td>{{ sec.instructor_name }}</td>
+                <td style="font-size: 0.8rem;">{{ sec.schedule }}</td>
+                <td>
+                    <div class="seats-indicator">
+                        <span>{{ sec.available_seats }}/{{ sec.max_seats }}</span>
+                        <div class="seats-bar">
+                            {% set pct = (sec.enrolled_seats / sec.max_seats * 100) | int %}
+                            <div class="seats-bar-fill" style="width: {{ pct }}%;
+                                background: {% if pct > 90 %}var(--danger){% elif pct > 70 %}var(--warning){% else %}var(--success){% endif %};"></div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {% if sec.prereq_code %}
+                        {% if sec.prereq_met %}
+                            <span class="prereq-met" title="Prerequisite met">✅ {{ sec.prereq_code }}</span>
+                        {% else %}
+                            <span class="prereq-not" title="Prerequisite NOT met">❌ {{ sec.prereq_code }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge badge-muted">None</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if sec.already_enrolled %}
+                        <span class="badge badge-info">Enrolled</span>
+                    {% elif sec.available_seats <= 0 %}
+                        <span class="badge badge-danger">Full</span>
+                    {% elif not sec.prereq_met %}
+                        <button class="btn btn-sm" disabled title="Missing prerequisite: {{ sec.prereq_code }}">Register</button>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('register_course') }}" style="display: inline;">
+                            <input type="hidden" name="section_id" value="{{ sec.section_id }}">
+                            <button type="submit" class="btn btn-success btn-sm">Register</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ url_for('student_dashboard') }}" class="btn btn-primary">← Back to Dashboard</a>
+</div>
+{% endblock %}
