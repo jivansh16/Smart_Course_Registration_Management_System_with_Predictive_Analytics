@@ -1,2 +1,0 @@
-# Smart_Course_Registration_Management_System_with_Predictive_Analytics
-Developing a database-driven course registration system with Student, Instructor and Admin modules. Designing the relational database using ER Diagram, normalization, keys and constraints for courses, prerequisite, sections and registrations. Integrating an ML component to identify students at risk of failing a course based on academic performance.
