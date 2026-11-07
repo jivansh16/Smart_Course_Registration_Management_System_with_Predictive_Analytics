@@ -76,22 +76,7 @@ Possible models include:
 - KNN
 
 ## Dataset
-
  synthetic, simulated dataset generated specifically for testing and demonstration purposes.
-
-### Course Recommendation
-
-Data that can be used to construct the recommendation task.
-
-Relevant information includes:
-
-- Student-course interactions
-- Course/module information
-- Assessment information
-- Student performance
-- Course activity
-
-The recommendation system will use historical interactions to identify courses that may be relevant to a student.
 
 ## Tech Stack
 
